@@ -1,0 +1,5 @@
+---
+- name: Install mysql
+  yum: name={{ item }} state=latest
+  with_items:
+    - "mysql-devel"

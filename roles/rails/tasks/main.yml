@@ -1,0 +1,23 @@
+---
+- name: Install rails and bundler
+  sudo_user: app
+  command: bash -lc "gem install bundler"
+
+# install packages for rails
+- include: setup-Ubuntu14.04.yml
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_version == '14.04'
+- include: setup-CentOS6.yml
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version == '6'
+- include: setup-Amazon.yml
+  when:
+    - ansible_distribution == 'Amazon'
+
+- name: Create rails directories
+  action: file dest=/data/var/rails state=directory mode=0755 owner=app group=app
+
+- name: Create symlink to rails directory
+  file: src=/data/var/rails dest=/var/rails owner=app group=app state=link

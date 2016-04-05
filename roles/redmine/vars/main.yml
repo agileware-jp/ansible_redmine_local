@@ -1,0 +1,13 @@
+redmine_fqdn: redmine.localdomain
+redmine_dest_dir: /var/rails
+redmine_version: 3.2.0
+
+redmine_user_name: app
+redmine_user_group: app
+
+# DB
+redmine_db_adapter: mysql2
+redmine_db_name: redmine
+redmine_db_host: localhost
+redmine_db_user: root
+redmine_db_password: ""

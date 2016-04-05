@@ -1,0 +1,137 @@
+#! /bin/bash
+
+### BEGIN INIT INFO
+# Provides:          unicorn_redmine
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: redmine
+# Description:       redmine
+### END INIT INFO
+
+set -u
+set -e
+
+# basic settings
+NAME=unicorn
+ENVIRONMENT=production
+APP_NAME=redmine
+USER=app
+APP_PATH=/redmine
+
+ROOT_DIR=/var/rails/${APP_NAME}
+
+PID=${ROOT_DIR}/tmp/pids/redmine.pid
+CONF="${ROOT_DIR}/config/unicorn/${ENVIRONMENT}.rb"
+
+cd ${ROOT_DIR} || exit 1
+
+is_alive()
+{
+    alive=""
+    ps aux | grep unicorn | grep -v grep | awk '{ print $2 }' | grep `cat ${PID}` && alive=true
+    if [ "${alive}" = "true" ]; then
+        echo "true"
+    else
+        echo "false"
+    fi
+}
+
+killall_unicorns()
+{
+    UNICORN_PID=`ps aux | grep "$CONF" | grep master | awk '{ print $2 }'`
+    if [ "${UNICORN_PID}" = "" ]; then
+        echo "No unicorns to kill"
+    else
+        echo "Kill all unicorns!"
+    fi
+    su ${USER} -c "kill -KILL $UNICORN_PID"
+}
+
+start()
+{
+    cd $ROOT_DIR
+    if [ -e $PID ]; then
+        alive=`is_alive`
+        if [ "${alive}" = "true" ]; then
+            echo "$NAME already started";
+            exit 1;
+        else
+            echo "$NAME not started, but ${PID} exists. so removed it.";
+            rm -f $PID;
+            killall_unicorns
+        fi
+    fi
+    echo "start $NAME";
+    if [ -e /home/${USER}/.bash_profile ]; then
+      su ${USER} -c "source ~/.bash_profile;bundle exec unicorn_rails -c ${CONF} -E ${ENVIRONMENT} -D"
+    else
+      su ${USER} -c "source ~/.profile;bundle exec unicorn_rails -c ${CONF} -E ${ENVIRONMENT} -D"
+    fi
+}
+
+stop()
+{
+    if [ ! -e $PID ]; then
+        echo "$NAME not started";
+        exit 1;
+    fi
+    echo "stop $NAME";
+    kill `cat ${PID}`
+    rm -f $PID
+}
+
+graceful_stop()
+{
+    if [ ! -e $PID ]; then
+        echo "$NAME not started";
+        exit 1;
+    fi
+    echo "stop $NAME";
+    kill -QUIT `cat ${PID}`
+    rm -f $PID
+}
+
+reload()
+{
+    if [ ! -e $PID ]; then
+        echo "$NAME not started";
+        start
+        exit 0;
+    fi
+    echo "reload $NAME";
+    kill -USR2 `cat ${PID}`
+}
+
+restart()
+{
+    if [ ! -e $PID ]; then
+        echo "$NAME not started";
+        start
+        exit 0;
+    fi
+    echo "restart $NAME";
+    stop
+    start
+}
+
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    graceful_stop)
+        graceful_stop
+        ;;
+    reload)
+        reload
+        ;;
+    restart)
+        reload
+        ;;
+    *)
+        echo "Syntax Error: release [start|stop|graceful_stop|reload|restart]"
+        ;;
+esac

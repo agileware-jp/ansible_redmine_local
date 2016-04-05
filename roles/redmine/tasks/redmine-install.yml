@@ -1,0 +1,96 @@
+---
+- name: Create symlink to dest directory
+  file: src=/data/var/rails dest={{redmine_dest_dir}} owner=app group=app state=link
+- name: Create releases directory.
+  action: file dest={{redmine_dest_dir}}/releases state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+
+- name: Check shared dir already exist.
+  stat: path={{redmine_dest_dir}}/shared
+  register: shared_dir
+- name: Create shared directory.
+  action: file dest={{redmine_dest_dir}}/shared state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/config directory.
+  action: file dest={{redmine_dest_dir}}/shared/config state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/config/unicorn directory.
+  action: file dest={{redmine_dest_dir}}/shared/config/unicorn state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/files directory.
+  action: file dest={{redmine_dest_dir}}/shared/files state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/vendor directory.
+  action: file dest={{redmine_dest_dir}}/shared/vendor state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/log directory.
+  action: file dest={{redmine_dest_dir}}/shared/log state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/plugins directory.
+  action: file dest={{redmine_dest_dir}}/shared/plugins state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+- name: Create shared/tmp directory.
+  action: file dest={{redmine_dest_dir}}/shared/tmp state=directory mode=0755 owner={{redmine_user_name}} group={{redmine_user_group}}
+  when: not shared_dir.stat.exists
+
+- name: Check same redmine already exist.
+  stat: path={{redmine_dest_dir}}/releases/redmine-{{redmine_version}}
+  register: redmine_archive
+
+- name: Download redmine
+  get_url: url="http://www.redmine.org/releases/redmine-{{redmine_version}}.tar.gz" dest={{redmine_dest_dir}}/releases
+  when: not redmine_archive.stat.exists
+  sudo: yes
+  sudo_user: "{{redmine_user_name}}"
+
+- name: Extract redmine
+  shell: cd {{redmine_dest_dir}}/releases; tar zxf redmine-{{redmine_version}}.tar.gz
+  when: not redmine_archive.stat.exists
+  sudo: yes
+  sudo_user: "{{redmine_user_name}}"
+
+- name: Link to {{redmine_dest_dir}}/redmine
+  file: src={{redmine_dest_dir}}/releases/redmine-{{redmine_version}} dest={{redmine_dest_dir}}/redmine owner={{redmine_user_name}} group={{redmine_user_group}} mode=0755 state=link
+
+- name: Copy database.yml
+  template: src=database.yml.j2 dest={{redmine_dest_dir}}/shared/config/database.yml
+
+- name: Copy Gemfile.local
+  template: src=Gemfile.local.j2 dest={{redmine_dest_dir}}/shared/Gemfile.local
+
+- name: Copy unicorn.rb
+  template: src=unicorn.rb.j2 dest={{redmine_dest_dir}}/shared/config/unicorn/production.rb
+
+- name: Copy reset_symlinks script
+  template: src=reset_symlinks.j2 dest={{redmine_dest_dir}}/shared/reset_symlinks owner={{redmine_user_name}} group={{redmine_user_group}} mode=0775
+
+- name: run reset_symlinks
+  shell: cd {{redmine_dest_dir}}/shared;./reset_symlinks
+  sudo: yes
+  sudo_user: "{{redmine_user_name}}"
+
+- name: Bundle
+  shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle install --without development test --path=vendor/bundle"
+  sudo: yes
+  sudo_user: "{{redmine_user_name}}"
+
+- name: Generate secret_token
+  shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle exec rake config/initializers/secret_token.rb"
+  sudo: yes
+  sudo_user: "{{redmine_user_name}}"
+
+- name: Create redmine database and load default data
+  shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle exec rake db:create RAILS_ENV=production; bundle exec rake db:migrate RAILS_ENV=production; bundle exec rake redmine:load_default_data RAILS_ENV=production REDMINE_LANG=ja"
+  sudo: yes
+  sudo_user: "{{redmine_user_name}}"
+
+- name: Install redmine init script
+  template: src=unicorn_redmine.j2 dest=/etc/init.d/redmine mode=0755
+
+- name: remove config.ru on Redmine root
+  file: path=/var/rails/redmine/config.ru state=absent
+
+- name: add configuration.yml
+  template: src=configuration.yml.j2 dest=/var/rails/shared/config/configuration.yml
+
+- name: Start redmine
+  service: name=redmine state=restarted enabled=yes

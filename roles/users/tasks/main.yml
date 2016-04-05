@@ -1,0 +1,8 @@
+---
+# Add Users
+- name: Add user {{user_name}}
+  user: name={{user_name}} shell=/bin/bash state=present append=yes
+- name: Prepare SSH directory
+  action: file dest=/home/{{user_name}}/.ssh state=directory mode=0700 owner={{user_name}} group={{user_group}}
+- name: Add Sudoers
+  lineinfile: "dest=/etc/sudoers backup=yes state=present regexp='^{{user_name}}' line='{{user_name}} ALL=(ALL) NOPASSWD: ALL'"

@@ -1,0 +1,45 @@
+upstream unicorn {
+  server unix:/var/rails/shared/tmp/sockets/redmine.sock;
+}
+
+server {
+  listen 80;
+  server_name {{app_fqdn}} default_server;
+  
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443;
+  #ssl on;
+  #ssl_certificate /etc/nginx/ssl/server.crt;
+  #ssl_certificate_key /etc/nginx/ssl/server.key;
+
+  server_name {{app_fqdn}} default_server;
+
+  client_max_body_size 200m;
+
+  access_log /var/log/nginx/{{app_fqdn}}.access.log;
+  error_log /var/log/nginx/{{app_fqdn}}.error.log;
+
+  proxy_connect_timeout 60;
+  proxy_read_timeout    60;
+  proxy_send_timeout    60;
+
+  location / {
+    root /var/rails/redmine/public;
+    if (-f $request_filename){
+      break;
+    }
+    location ~ ^/assets/ {
+        root   /var/rails/redmine/public;
+    }
+
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_pass http://unicorn;
+    proxy_redirect off;
+  }
+}

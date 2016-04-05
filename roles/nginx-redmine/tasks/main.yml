@@ -1,0 +1,27 @@
+---
+- name: Create symlink to rails directory
+  file: src=/data/var/rails dest=/var/rails owner=app group=app state=link
+
+# install packages for rails
+- include: setup-Ubuntu14.04.yml
+  when: 
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_version == '14.04' 
+- include: setup-CentOS6.yml
+  when: 
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version == '6' 
+
+# import nginx conf for app
+- name: import nginx conf for app
+  template: src=site.conf.j2 dest=/etc/nginx/sites-available/{{app_fqdn}} owner=root group=root mode=0644
+- name: link nginx conf to sites-available
+  file: src=/etc/nginx/sites-available/{{app_fqdn}} dest=/etc/nginx/sites-enabled/{{app_fqdn}} owner=root group=root state=link
+- name: remove default site file.
+  file: path=/etc/nginx/sites-enabled/default state=absent
+- name: Restart Nginx
+  service: name=nginx state=restarted
+
+# permit log dir
+- name: set 775 to /var/log/nginx
+  file: path=/var/log/nginx state=touch mode=0755

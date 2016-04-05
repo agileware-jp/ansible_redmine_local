@@ -1,0 +1,9 @@
+- name: install mysql packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - mysql-devel
+    - mysql-server
+    - MySQL-python
+    - libselinux-python
+- name: start mysqld
+  service: name=mysqld state=restarted enabled=yes

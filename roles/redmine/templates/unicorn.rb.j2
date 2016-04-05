@@ -1,0 +1,20 @@
+proj_root_dir = File.expand_path("../../../", __FILE__)
+worker_processes 2
+listen      "#{proj_root_dir}/tmp/sockets/redmine.sock"
+pid         "#{proj_root_dir}/tmp/pids/redmine.pid"
+stderr_path "#{proj_root_dir}/log/stderr.log"
+stdout_path "#{proj_root_dir}/log/stdout.log"
+timeout 1200
+
+# graceful restart用の設定 (Masterプロセスがシームレスに切り替わる)
+before_fork do |server, worker|
+  old_pid = "#{server.config[:pid]}.oldbin"
+  # oldプロセスがいたら終了する
+  if old_pid != server.pid
+    begin
+      sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
+      Process.kill(sig, File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+    end
+  end
+end

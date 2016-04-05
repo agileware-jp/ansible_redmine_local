@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "RESET SYMLINK TO /var/rails/redmine"
+
+rm -rf /var/rails/redmine/files
+rm -rf /var/rails/redmine/tmp
+rm -rf /var/rails/redmine/plugins
+rm -rf /var/rails/redmine/vendor
+rm -rf /var/rails/redmine/log
+
+ln -sf /var/rails/shared/files /var/rails/redmine
+ln -sf /var/rails/shared/tmp /var/rails/redmine
+ln -sf /var/rails/shared/plugins /var/rails/redmine
+ln -sf /var/rails/shared/vendor /var/rails/redmine
+ln -sf /var/rails/shared/log /var/rails/redmine
+
+ln -sf /var/rails/shared/Gemfile.local /var/rails/redmine/
+ln -sf /var/rails/shared/config/database.yml /var/rails/redmine/config/
+ln -sf /var/rails/shared/config/configuration.yml /var/rails/redmine/config/
+ln -sf /var/rails/shared/config/secrets.yml /var/rails/redmine/config/
+ln -sf /var/rails/shared/config/unicorn /var/rails/redmine/config/
+

@@ -1,0 +1,7 @@
+---
+- name: Install mysql
+  apt: name={{ item }} state=latest
+  with_items:
+    - "libgmp3-dev"
+    - "libmysql++-dev"
+
