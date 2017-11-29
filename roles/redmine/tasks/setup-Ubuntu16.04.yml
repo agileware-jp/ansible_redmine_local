@@ -1,0 +1,8 @@
+---
+- name: Install rmagick packages
+  apt: name="{{item}}" state=latest
+  with_items:
+    - "libmagickcore-dev"
+    - "libmagick++-dev"
+    - "libmagickwand-dev"
+    - "fonts-vlgothic"

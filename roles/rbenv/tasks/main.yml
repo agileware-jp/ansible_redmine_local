@@ -3,6 +3,10 @@
   when: 
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version == '14.04' 
+- include: setup-Ubuntu16.04.yml
+  when: 
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_version == '16.04' 
 - include: setup-CentOS6.yml
   when: 
     - ansible_distribution == 'CentOS'
