@@ -1,7 +1,7 @@
 ---
 - hosts: dummy
   connection: local
-  sudo: yes
+  become: yes
   roles:
     - {role: apt-update}
     - {role: users, user_name: maintainer, user_group: maintainer}
