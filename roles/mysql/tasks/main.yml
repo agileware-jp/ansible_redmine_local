@@ -15,6 +15,15 @@
   when: 
     - ansible_distribution == 'Amazon'
 
+- name: root ユーザ接続設定ファイル作成
+  template:
+    src: .my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+  when: init_flag.rc == 1
+
 - name: root アカウントのパスワードを設定
   mysql_user:
     name: root
