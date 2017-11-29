@@ -22,7 +22,6 @@
     owner: root
     group: root
     mode: 0600
-  when: init_flag.rc == 1
 
 - name: root アカウントのパスワードを設定
   mysql_user:
