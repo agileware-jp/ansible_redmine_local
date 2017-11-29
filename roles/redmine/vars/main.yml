@@ -1,6 +1,6 @@
 redmine_fqdn: redmine.localdomain
 redmine_dest_dir: /var/rails
-redmine_version: 3.2.0
+redmine_version: 3.4.2
 
 redmine_user_name: app
 redmine_user_group: app
