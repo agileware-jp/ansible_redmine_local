@@ -30,10 +30,8 @@ vars:
    - ::1
    - localhost
 
-- name: create mysql user
-  mysql_user: name={{ mysql_user }} host={{ item }} password={{ mysql_password }} priv={{ mysql_database }}.*:ALL,GRANT state=present
-    with_items:
-      - "%"
-      - localhost
-      - 127.0.0.1
-      - ::1
+- name: root アカウントのパスワードを設定
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mysql_root_password }}"
