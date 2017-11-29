@@ -4,5 +4,6 @@
     - mysql-server
     - mysql-client
     - libmysql++-dev
+    - python-mysqldb
 - name: start mysqld
   service: name=mysql state=restarted enabled=yes
