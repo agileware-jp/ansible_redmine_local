@@ -9,5 +9,5 @@ redmine_user_group: app
 redmine_db_adapter: mysql2
 redmine_db_name: redmine
 redmine_db_host: localhost
-redmine_db_user: root
-redmine_db_password: ""
+redmine_db_user: app
+redmine_db_password: "admin123"

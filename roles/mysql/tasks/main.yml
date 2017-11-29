@@ -1,4 +1,8 @@
 ---
+vars:
+　mysql_user: app
+  mysql_password: admin123
+
 - include: setup-Ubuntu14.04.yml
   when: 
     - ansible_distribution == 'Ubuntu'
@@ -25,3 +29,11 @@
    - 127.0.0.1
    - ::1
    - localhost
+
+ - name: create mysql user
+      mysql_user: name={{ mysql_user }} host={{ item }} password={{ mysql_password }} priv={{ mysql_database }}.*:ALL,GRANT state=present
+      with_items:
+        - "%"
+        - localhost
+        - 127.0.0.1
+        - ::1
