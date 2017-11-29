@@ -2,7 +2,6 @@
 vars:
   mysql_user: app
   mysql_password: admin123
-
 - include: setup-Ubuntu14.04.yml
   when: 
     - ansible_distribution == 'Ubuntu'
