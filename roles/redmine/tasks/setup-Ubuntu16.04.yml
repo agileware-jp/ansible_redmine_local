@@ -6,3 +6,5 @@
     - "libmagick++-dev"
     - "libmagickwand-dev"
     - "fonts-vlgothic"
+    - "imagemagick"
+    - "fonts-takao-pgothic"
