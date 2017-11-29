@@ -14,3 +14,14 @@
 - include: setup-Amazon.yml
   when: 
     - ansible_distribution == 'Amazon'
+
+- name: Set the root privileges
+  mysql_user:
+    user: root
+    host: "{{ item }}"
+    password: ""
+  with_items:
+   - "%"
+   - 127.0.0.1
+   - ::1
+   - localhost
