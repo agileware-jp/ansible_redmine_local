@@ -6,7 +6,7 @@
     - {role: apt-update}
     - {role: users, user_name: maintainer, user_group: maintainer}
     - {role: users, user_name: app, user_group: app}
-    - {role: rbenv, rbenv_user: app, rbenv_ruby_version: "2.2.4"}
+    - {role: rbenv, rbenv_user: app, rbenv_ruby_version: "2.4.2"}
     - {role: mysql}
-    - {role: redmine, rbenv_user: app, redmine_version: "3.2.1",redmine_db_host: "localhost", redmine_db_password: "", smtp_user: "", smtp_pass: ""}
+    - {role: redmine, rbenv_user: app, redmine_version: "3.4.2",redmine_db_host: "localhost", redmine_db_password: "", smtp_user: "", smtp_pass: ""}
     - {role: nginx-redmine, app_name: "redmine", app_fqdn: "{{app_fqdn}}" }
