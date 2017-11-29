@@ -2,15 +2,15 @@ upstream unicorn {
   server unix:/var/rails/shared/tmp/sockets/redmine.sock;
 }
 
-server {
-  listen 80;
-  server_name {{app_fqdn}} default_server;
-  
-  return 301 https://$host$request_uri;
-}
+#server {
+#  listen 80;
+#  server_name {{app_fqdn}} default_server;
+#  
+#  return 301 https://$host$request_uri;
+#}
 
 server {
-  listen 443;
+  listen 80;
   #ssl on;
   #ssl_certificate /etc/nginx/ssl/server.crt;
   #ssl_certificate_key /etc/nginx/ssl/server.key;
