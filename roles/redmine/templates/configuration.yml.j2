@@ -2,13 +2,13 @@ default:
   email_delivery:
     delivery_method: :smtp
     smtp_settings:
-      address: "cloudmine.sakura.ne.jp"
-      port: 25
-      authentication: :login
-      domain: 'cloudmine.jp'
+      enable_starttls_auto: true
+      address: "oncloud-mail-gw.cloudmine.jp"
+      port: 587
+      domain: "cloudmine.jp"
+      authentication: :plain
       user_name: '{{smtp_user}}'
       password: '{{smtp_pass}}'
-
   attachments_storage_path:
   autologin_cookie_name:
   autologin_cookie_path:
@@ -28,6 +28,6 @@ default:
   scm_filesystem_path_regexp:
   scm_stderr_log_file:
   database_cipher_key:
-  rmagick_font_path:
+  rmagick_font_path: /usr/share/fonts/truetype/fonts-japanese-gothic.ttf
 production:
 development:
