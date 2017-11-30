@@ -1,0 +1,26 @@
+#!/bin/bash
+
+SWAP_SIZE={{swap_size}}
+SWAP_FILE={{swap_file}}
+RC_LOCAL={{rc_local}}
+
+# make swap
+dd if=/dev/zero of=${SWAP_FILE} bs=1M count=${SWAP_SIZE}
+mkswap ${SWAP_FILE}
+swapon ${SWAP_FILE}
+
+# edit rc.local
+cat << HERE >> ${RC_LOCAL}
+# add swap image
+mkswap ${SWAP_FILE} && \\
+swapon ${SWAP_FILE}
+HERE
+
+# for Ubuntu
+RES=`grep "^exit 0" ${RC_LOCAL}`
+if [ $? -eq 0 ]; then
+ sed -i -e "s/exit\ 0//g" ${RC_LOCAL}
+ echo "exit 0" >> ${RC_LOCAL}
+fi
+
+exit 0

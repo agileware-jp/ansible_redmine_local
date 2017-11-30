@@ -1,0 +1,8 @@
+---
+# setup monitoring tools
+- name: copy swap setup script
+  template: src=add_swap.sh.j2 dest=/tmp/add_swap.sh owner=root group=root mode=0744
+  ignore_errors: True
+- name: exec setup script
+  shell: sh /tmp/add_swap.sh
+  ignore_errors: True

@@ -1,0 +1,4 @@
+# swap 
+swap_size: 2048
+swap_file: '/swap.img'
+rc_local: '/etc/rc.local'
