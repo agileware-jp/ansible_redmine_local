@@ -39,14 +39,14 @@
 - name: Download redmine
   get_url: url="http://www.redmine.org/releases/redmine-{{redmine_version}}.tar.gz" dest={{redmine_dest_dir}}/releases
   when: not redmine_archive.stat.exists
-  sudo: yes
-  sudo_user: "{{redmine_user_name}}"
+  become: yes
+  become_user: "{{redmine_user_name}}"
 
 - name: Extract redmine
   shell: cd {{redmine_dest_dir}}/releases; tar zxf redmine-{{redmine_version}}.tar.gz
   when: not redmine_archive.stat.exists
-  sudo: yes
-  sudo_user: "{{redmine_user_name}}"
+  become: yes
+  become_user: "{{redmine_user_name}}"
 
 - name: Link to {{redmine_dest_dir}}/redmine
   file: src={{redmine_dest_dir}}/releases/redmine-{{redmine_version}} dest={{redmine_dest_dir}}/redmine owner={{redmine_user_name}} group={{redmine_user_group}} mode=0755 state=link
@@ -65,23 +65,23 @@
 
 - name: run reset_symlinks
   shell: cd {{redmine_dest_dir}}/shared;./reset_symlinks
-  sudo: yes
-  sudo_user: "{{redmine_user_name}}"
+  become: yes
+  become_user: "{{redmine_user_name}}"
 
 - name: Bundle
   shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle install --without development test --path=vendor/bundle"
-  sudo: yes
-  sudo_user: "{{redmine_user_name}}"
+  become: yes
+  become_user: "{{redmine_user_name}}"
 
 - name: Generate secret_token
   shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle exec rake config/initializers/secret_token.rb"
-  sudo: yes
-  sudo_user: "{{redmine_user_name}}"
+  become: yes
+  become_user: "{{redmine_user_name}}"
 
 - name: Create redmine database and load default data
   shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle exec rake db:create RAILS_ENV=production; bundle exec rake db:migrate RAILS_ENV=production; bundle exec rake redmine:load_default_data RAILS_ENV=production REDMINE_LANG=ja"
-  sudo: yes
-  sudo_user: "{{redmine_user_name}}"
+  become: yes
+  become_user: "{{redmine_user_name}}"
 
 - name: Install redmine init script
   template: src=unicorn_redmine.j2 dest=/etc/init.d/redmine mode=0755
