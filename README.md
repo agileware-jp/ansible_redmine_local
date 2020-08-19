@@ -10,6 +10,14 @@ $ ansible --version
 => 2.0.1.0
 ```
 
+## setup ansible (for CentOS 7)
+
+```
+sudo yum install epel-release
+sudo yum install ansible
+sudo yum install git
+```
+
 ## clone repository
 
 ```
