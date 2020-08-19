@@ -37,7 +37,7 @@
   register: redmine_archive
 
 - name: Download redmine
-  get_url: url="http://www.redmine.org/releases/redmine-{{redmine_version}}.tar.gz" dest={{redmine_dest_dir}}/releases
+  get_url: url="https://www.redmine.org/releases/redmine-{{redmine_version}}.tar.gz" dest={{redmine_dest_dir}}/releases
   when: not redmine_archive.stat.exists
   sudo: yes
   sudo_user: "{{redmine_user_name}}"

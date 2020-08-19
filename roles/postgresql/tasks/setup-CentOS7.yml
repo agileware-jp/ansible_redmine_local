@@ -1,0 +1,30 @@
+---
+- name: Install a yum repository file of pgdg 1/2.
+  command: "rpm -ivh --nodeps https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+  args:
+    creates: /etc/yum.repos.d/pgdg-redhat-all.repo
+    warn: no
+
+- name: Install a yum repository file of pgdg 2/2.
+  replace: dest=/etc/yum.repos.d/pgdg-redhat-all.repo regexp='\$releasever' replace='7'
+
+- name: Install PostgreSQL 12 packages.
+  yum:
+    name:
+     - python-psycopg2
+     - postgresql12
+     - postgresql12-server
+
+- name: Perform the initdb command.
+  command: "/usr/pgsql-12/bin/postgresql-12-setup initdb"
+  environment:
+    PGSETUP_INITDB_OPTIONS: '--encoding=UTF-8 --locale=C'
+  args:
+    creates: /var/lib/pgsql/12/data/PG_VERSION
+    warn: no
+   
+- name: Start the PostgreSQL 12 service and make it running on rebooting
+  systemd:
+    name: postgresql-12
+    enabled: yes
+    state: started

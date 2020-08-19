@@ -3,10 +3,10 @@
   when: 
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version == '14.04' 
-- include: setup-CentOS6.yml
+- include: setup-CentOS7.yml
   when: 
     - ansible_distribution == 'CentOS'
-    - ansible_distribution_major_version == '6' 
+    - ansible_distribution_major_version == '7' 
 - include: setup-Amazon.yml
   when: 
     - ansible_distribution == 'Amazon'

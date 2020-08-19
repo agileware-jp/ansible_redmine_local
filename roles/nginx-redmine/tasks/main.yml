@@ -11,7 +11,10 @@
   when: 
     - ansible_distribution == 'CentOS'
     - ansible_distribution_major_version == '6' 
-
+- include: setup-CentOS7.yml
+  when: 
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version == '7' 
 # import nginx conf for app
 - name: import nginx conf for app
   template: src=site.conf.j2 dest=/etc/nginx/sites-available/{{app_fqdn}} owner=root group=root mode=0644
