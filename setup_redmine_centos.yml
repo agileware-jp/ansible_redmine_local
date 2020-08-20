@@ -1,7 +1,7 @@
 ---
 - hosts: dummy
   connection: local
-  sudo: yes
+  become: true
   roles:
     - {role: yum-update}
     - {role: users, user_name: maintainer, user_group: maintainer}
