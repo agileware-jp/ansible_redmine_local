@@ -26,7 +26,7 @@
 - name: Install dependencies for ruby-build (see. https://github.com/sstephenson/ruby-build/wiki)
   yum: name={{ item }} state=latest
   with_items:
-    - gcc-6 
+    - gcc
     - bzip2
     - openssl-devel
     - libyaml-devel

@@ -1,5 +1,5 @@
 ---
-- hosts: dummy
+- hosts: localhost
   connection: local
   become: true
   roles:
