@@ -49,7 +49,7 @@
 
 - name: Install ruby
   command: "sudo -iu {{ rbenv_user }} rbenv install {{ rbenv_ruby_version }}"
-  when: rbenv_check_install|failed
+  when: rbenv_check_install is failed
 
 - name: Check if version is the default ruby version
   shell: "sudo -iu {{ rbenv_user }} rbenv version | grep {{ rbenv_ruby_version }}"
