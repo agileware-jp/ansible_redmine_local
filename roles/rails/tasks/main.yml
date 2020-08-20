@@ -1,6 +1,6 @@
 ---
 - name: Install rails and bundler
-  sudo_user: app
+  become_user: app
   command: bash -lc "gem install bundler"
 
 # install packages for rails
