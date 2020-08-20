@@ -6,7 +6,7 @@ redmine_user_name: app
 redmine_user_group: app
 
 # DB
-redmine_db_adapter: mysql2
+redmine_db_adapter: postgresql
 redmine_db_name: redmine
 redmine_db_host: localhost
 redmine_db_user: root
