@@ -74,7 +74,7 @@
   become_user: "{{redmine_user_name}}"
 
 - name: Generate secret_token
-  shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle exec rake config/initializers/secret_token.rb"
+  shell: bash -lc "cd {{redmine_dest_dir}}/redmine; bundle exec rake generate_secret_token"
   become: yes
   become_user: "{{redmine_user_name}}"
 
@@ -83,8 +83,11 @@
   become: yes
   become_user: "{{redmine_user_name}}"
 
-- name: Install redmine init script
-  template: src=unicorn_redmine.j2 dest=/etc/init.d/redmine mode=0755
+#- name: Install redmine init script
+#  template: src=unicorn_redmine.j2 dest=/etc/init.d/redmine mode=0755
+
+- name: add redmine.service to /var/systemd/system
+  template: src=redmine.service.j2 dest=/etc/systemd/system/redmine.service owner=root group=root mode=0644
 
 - name: remove config.ru on Redmine root
   file: path=/var/rails/redmine/config.ru state=absent

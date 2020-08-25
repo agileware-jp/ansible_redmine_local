@@ -1,0 +1,19 @@
+[Unit]
+Description=Redmine
+
+[Service]
+WorkingDirectory=/var/rails/redmine
+User=app
+Group=app
+Environment=RAILS_ENV=production
+SyslogIdentifier=unicorn
+PIDFile=/data/var/rails/shared/tmp/pids/redmine.pid
+
+ExecStart=/bin/bash -lc 'bundle exec "unicorn_rails -c config/unicorn/production.rb -E production -D"'
+ExecStop=/bin/kill -QUIT $MAINPID
+ExecReload=/bin/kill -USR2 $MAINPID
+TimeoutSec=300
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
